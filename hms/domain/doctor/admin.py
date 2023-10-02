@@ -4,7 +4,7 @@ import uuid
 from dataclasses import dataclass
 from django.db import models
 from hms.domain.user.models import User
-from utils.base_models import AuditModelMixin
+from hms.utils.base_models import AuditModelMixin
 
 
 @dataclass(frozen=True)

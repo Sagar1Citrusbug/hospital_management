@@ -6,8 +6,8 @@ from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 
 from dataclasses import dataclass, field
-from utils.helper import asdict
-from utils.base_models import AuditModelMixin
+from hms.utils.helper import asdict
+from hms.utils.base_models import AuditModelMixin
 
 from typing import Union
 
@@ -54,11 +54,6 @@ class UserManagerAutoID(UserManager):
         return self._create_user(username, email, password, **extra_fields)
 
 
-# ----------------------------------------------------------------------
-# User Model
-# ----------------------------------------------------------------------
-
-
 class User(AbstractUser, AuditModelMixin):
     """
     A User replaces django's default user id with a UUID that should be created by the application, not the database.
@@ -73,7 +68,6 @@ class User(AbstractUser, AuditModelMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
-    
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
