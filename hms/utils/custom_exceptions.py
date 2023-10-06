@@ -11,6 +11,18 @@ class UserRegistrationException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
+    
+
+@dataclass(frozen=True)
+class UserAlreadyExistsException(Exception):
+    item: str
+    message: str
+
+    def exception_dict(self) -> dict:
+        return {"item": self.item, "message": self.message}
+
+    def __repr__(self):
+        return f"{self.item}: {self.message}"
 
 
 @dataclass(frozen=True)

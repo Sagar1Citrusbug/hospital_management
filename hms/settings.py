@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework_simplejwt",
     "rest_framework",
-    "rest_framework_swagger", 
-    "drf_yasg",
+    "drf_spectacular",
+    # "rest_framework_swagger", 
+    # "drf_yasg",
     "hms.domain.user",
     "hms.domain.patient",
     "hms.domain.doctor",
@@ -87,6 +88,7 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
@@ -144,3 +146,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+ENABLE_API = True

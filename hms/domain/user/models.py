@@ -34,6 +34,18 @@ class UserPersonalData:
         validate_email(self.email)
 
 
+@dataclass(frozen=True)
+class UserBasePermissions:
+    """
+    This is a value object that should be used to pass user base permissions to the UserFactory
+    """
+
+    is_staff: bool
+    is_active: bool
+    is_patient: bool
+
+
+
 class UserManagerAutoID(UserManager):
     """
     A User Manager that sets the uuid on a model when calling the create_superuser function.
@@ -61,6 +73,7 @@ class User(AbstractUser, AuditModelMixin):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     email = models.EmailField(unique=True)
+    username = models.CharField(max_length=30, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
 

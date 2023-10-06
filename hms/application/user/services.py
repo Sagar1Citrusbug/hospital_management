@@ -3,9 +3,11 @@ from rest_framework_simplejwt.tokens import (
     OutstandingToken,
     BlacklistedToken,
 )
-from hms.domain.user.models import User
+from django.contrib.auth.hashers import make_password
+from django.db import transaction
+from hms.domain.user.models import User, UserBasePermissions, UserPersonalData
 from hms.domain.user.services import UserServices
-from hms.utils.custom_exceptions import UserLoginException, UserLogoutException
+from hms.utils.custom_exceptions import UserLoginException, UserLogoutException, UserAlreadyExistsException, UserRegistrationException
 
 
 class UserAppServices:
@@ -15,6 +17,38 @@ class UserAppServices:
 
     def __init__(self) -> None:
         self.user_services = UserServices()
+
+    def create_user_from_dict(self, data: dict) -> User:
+        """This method will create user from dict."""
+        with transaction.atomic():
+            email = data.get("email", None)
+            username=data.get("username", None)
+            password = data.get("password", None)
+            user_exists = self.user_services.get_user_repo().filter(email=email)
+            if user_exists:
+                raise UserAlreadyExistsException(
+                    "User already Exists", f"{user_exists[0].email} already exists."
+                )
+            user_personal_data = UserPersonalData(
+          username=username, email=email
+            )
+           
+            user_factory_method = self.user_services.get_user_factory()
+            try:
+                user_obj = user_factory_method.build_entity_with_id(
+                    password=make_password(password),
+                    personal_data=user_personal_data,
+                    is_patient = data.get("is_patient"),
+                    is_staff= data.get("is_staff")
+                )
+                user_obj.save()
+
+                return user_obj
+            except UserRegistrationException as ure:
+                raise ure(
+                    "user creation errror", f"with below provided data"
+                )
+
 
     def get_user_token(self, user: User) -> dict:
         """This method will generate refresh and access token for user."""

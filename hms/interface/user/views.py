@@ -7,80 +7,63 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from hms.utils.custom_response import CustomResponse
-from .serializers import UserSerializer, UserLoginSerializer
-from hms.utils.custom_exceptions import UserLoginException, UserLogoutException
+from .serializers import UserRegistrationSerializer, UserLoginSerializer
+from hms.utils.custom_exceptions import UserLoginException, UserLogoutException, UserRegistrationException, UserAlreadyExistsException
 
 
-class UserLoginView(viewsets.ViewSet):
-    """
-    API endpoint that allows users to login.
-    """
-
+class UserViewSet(viewsets.ViewSet):
     def get_serializer_class(self):
-        if self.action == "sign_up":
+    
+        if self.action == "registration":
             return UserRegistrationSerializer
-        if self.action == "login":
+        if self.action =="login":
             return UserLoginSerializer
-        return UserSerializer
 
 
-    @action(detail=False, methods=["post"], name="sign_up")
-    @access_control()
-    def sign_up(self, request):
+    @action(detail=False, methods=["post"], name="registration")
+    def registration(self, request):
         serializer = self.get_serializer_class()
+    
         serializer_data = serializer(data=request.data)
+        print(serializer_data , "serializer dataaa")
         if serializer_data.is_valid():
+            print("lsdkfjsdsklfjlfksj`flkfjf")
             try:
-                user_data = UserAppServices(log=self.log).create_user_from_dict(
-                    data=serializer_data.data
-                )
-                serialized_user_data = UserSerializer(
-                    instance=user_data,
-                    context={
-                        "log": self.log,
-                    },
-                )
-                return APIResponse(
+                UserAppServices().create_user_from_dict(data=serializer_data.data)
+
+                return CustomResponse(
                     status_code=status.HTTP_201_CREATED,
-                    data=serialized_user_data.data,
-                    message=f"Successfully sign-up for user.",
+                    data=serializer_data.data,
+                    message=f"user created Successfully.",
                 )
-            except UserSignUpException as use:
-                return APIResponse(
+            except UserRegistrationException as use:
+                return CustomResponse(
                     status_code=use.status_code,
                     errors=use.error_data(),
                     message=f"An error occurred while Sign-up.",
                     for_error=True,
                 )
             except UserAlreadyExistsException as uae:
-                return APIResponse(
+                return CustomResponse(
                     status_code=uae.status_code,
                     errors=uae.error_data(),
                     message=f"User already exists",
                     for_error=True,
                 )
-            except MailNotSendException as uae:
-                return APIResponse(
-                    status_code=uae.status_code,
-                    errors=uae.error_data(),
-                    message="Mail not sent.",
-                    for_error=True,
-                )
             except Exception as e:
-                return APIResponse(
+                return CustomResponse(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     errors=e.args,
                     for_error=True,
                     general_error=True,
                 )
-        return APIResponse(
+
+        return CustomResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             errors=serializer_data.errors,
             message=f"Incorrect email or password",
             for_error=True,
         )
-
-
 
 
     @action(detail=False, methods=["post"], name="login")
@@ -114,7 +97,10 @@ class UserLoginView(viewsets.ViewSet):
             message=serializer_obj.errors,
         )
 
-class UserLogoutView(viewsets.ViewSet):
+
+    
+
+class UserLogoutViewset(viewsets.ViewSet):
     """
     API endpoint that allows users to logout.
     """
@@ -122,7 +108,7 @@ class UserLogoutView(viewsets.ViewSet):
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    @action(detail=False, methods=["post"])
+    @action(detail=False, methods=["post"], name="logout")
     def logout(self, request):
         try:
             UserAppServices().logout_user(user=self.request.user)

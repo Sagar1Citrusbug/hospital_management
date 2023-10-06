@@ -1,35 +1,43 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt import views as jwt_views
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+
 from rest_framework import permissions
 from hms.interface.user.urls import router as user_router
-# from hms.interface.doctor.urls import router as user_router
-# from hms.interface.user.urls import router as user_router
-# from hms.interface.user.urls import router as user_router
 
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="HMS",
-        default_version='v0',),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
+from django.contrib import admin
+from django.urls import path
+from django.urls import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from django.conf.urls.static import static
+from django.conf import settings
+from django.views.generic.base import RedirectView
+from hms.interface.user.urls import router as user_router
+
+
+ENABLE_API = settings.ENABLE_API
+PROJECT_URL = ""
+API_SWAGGER_URL = "api/v0/"
+REDIRECTION_URL = API_SWAGGER_URL if ENABLE_API else PROJECT_URL
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path(
-        "api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"
-    ),
-    path(
-        "api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"
-    ),
+    path("superadmin/", admin.site.urls),
+    path("", RedirectView.as_view(url="api/v0/", permanent=False)),
+]
 
-  path('', schema_view.with_ui('swagger', cache_timeout=0),name='schema-swagger-ui'),
-  path("", include(user_router.urls)),
-    # path("", include(doctor_router.urls)),
-    # path("", include(patient_router.urls)),
-    # path("", include(appointment_router.urls)),
+urlpatterns += [
+      path(
+        API_SWAGGER_URL,
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(API_SWAGGER_URL, include(user_router.urls)),
+    path("api/v0/schema/", SpectacularAPIView.as_view(), name="schema"),
+    # path(
+    #     "api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"
+    # ),
+    # path(
+    #     "api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"
+    # ),
 ]
