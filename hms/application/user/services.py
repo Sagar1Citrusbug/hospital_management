@@ -3,7 +3,8 @@ from rest_framework_simplejwt.tokens import (
     OutstandingToken,
     BlacklistedToken,
 )
-from django.contrib.auth.hashers import make_password
+# 
+# from django.contrib.auth.hashers import set_password
 from django.db import transaction
 from hms.domain.user.models import User, UserBasePermissions, UserPersonalData
 from hms.domain.user.services import UserServices
@@ -36,11 +37,12 @@ class UserAppServices:
             user_factory_method = self.user_services.get_user_factory()
             try:
                 user_obj = user_factory_method.build_entity_with_id(
-                    password=make_password(password),
+                
                     personal_data=user_personal_data,
                     is_patient = data.get("is_patient"),
                     is_staff= data.get("is_staff")
                 )
+                user_obj.set_password(password)
                 user_obj.save()
 
                 return user_obj
@@ -74,6 +76,7 @@ class UserAppServices:
     
         try:
             tokens = OutstandingToken.objects.filter(user_id=user)
+            print(tokens, "tokents ----------------------")
             for token in tokens:
                 t, _ = BlacklistedToken.objects.get_or_create(token=token)
             return True

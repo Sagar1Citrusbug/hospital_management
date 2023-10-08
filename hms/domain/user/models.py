@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.contrib.auth.hashers import make_password
+# from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 
 from dataclasses import dataclass, field
@@ -90,16 +90,15 @@ class User(AbstractUser, AuditModelMixin):
 class UserFactory:
     @staticmethod
     def build_entity_with_id(
-        password: str, personal_data: UserPersonalData, is_staff: bool, is_patient: bool
+        personal_data: UserPersonalData, is_staff: bool, is_patient: bool
     ):
         """This is a factory method used for build an instance of User"""
 
         personal_data_dict = asdict(personal_data, skip_empty=True)
-        password = make_password(password=password)
+      
         return User(
             id=UserID().id,
             **personal_data_dict,
-            password=password,
             is_staff=is_staff,
             is_patient=is_patient
         )

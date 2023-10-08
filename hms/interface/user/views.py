@@ -25,9 +25,8 @@ class UserViewSet(viewsets.ViewSet):
         serializer = self.get_serializer_class()
     
         serializer_data = serializer(data=request.data)
-        print(serializer_data , "serializer dataaa")
+      
         if serializer_data.is_valid():
-            print("lsdkfjsdsklfjlfksj`flkfjf")
             try:
                 UserAppServices().create_user_from_dict(data=serializer_data.data)
 
@@ -68,37 +67,39 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], name="login")
     def login(self, request):
-        serializer = self.get_serializer_class()
-        serializer_obj = serializer(data=request.data)
-        if serializer_obj.is_valid():
-            email = serializer_obj.data.get("email", None)
-            password = serializer_obj.data.get("password", None)
-            try:
-                user = authenticate(email=email, password=password)
-                response_data = UserAppServices().get_user_token(user=user)
-                message = "Login Successful"
-                return CustomResponse().success(data=response_data, message=message)
-            except UserLoginException as e:
-                message = "Invalid Credentials"
-                return CustomResponse().fail(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    errors=e.error_data(),
-                    message=message,
-                )
-            except Exception as e:
-                return CustomResponse().fail(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    errors=str(e.args),
-                    message="An error occurred while Login.",
-                )
-        return CustomResponse().fail(
-            status=status.HTTP_400_BAD_REQUEST,
-            errors=serializer_obj.errors,
-            message=serializer_obj.errors,
-        )
-
-
-    
+      
+            serializer = self.get_serializer_class()
+            serializer_obj = serializer(data=request.data)
+            if serializer_obj.is_valid():
+                email = serializer_obj.data.get("email", None)
+                password = serializer_obj.data.get("password", None)
+                print(email, password, "getting credssssss ----------")
+                try:
+                    user = authenticate(email=email, password=password)
+                    print(user, "user   -------------")
+                    response_data = UserAppServices().get_user_token(user=user)
+                    message = "Login Successful"
+                    return CustomResponse(data=response_data, message=message)
+                except UserLoginException as e:
+                    print(e,"eeeeee --------------")
+                    message = "Invalid Credentials"
+                    return CustomResponse(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        
+                        message=message,
+                    )
+                except Exception as e:
+                    return CustomResponse(
+                        status=status.HTTP_400_BAD_REQUEST,
+                        errors=str(e.args),
+                        message="An error occurred while Login.",
+                    )
+            return CustomResponse().fail(
+                status=status.HTTP_400_BAD_REQUEST,
+                errors=serializer_obj.errors,
+                message=serializer_obj.errors,
+            )
+        
 
 class UserLogoutViewset(viewsets.ViewSet):
     """
@@ -112,13 +113,14 @@ class UserLogoutViewset(viewsets.ViewSet):
     def logout(self, request):
         try:
             UserAppServices().logout_user(user=self.request.user)
-            return CustomResponse().success(
+            return CustomResponse(
                 data=None,
                 message="Successfully logout",
             )
         except UserLogoutException as e:
-            return CustomResponse().fail(
-                status=status.HTTP_400_BAD_REQUEST,
-                errors=e.error_data(),
+            print(e)
+            return CustomResponse(
+                status_code=status.HTTP_400_BAD_REQUEST,
+            
                 message="An error occurred while logout.",
             )
