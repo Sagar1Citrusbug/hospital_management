@@ -16,6 +16,7 @@ from django.views.generic.base import RedirectView
 from hms.interface.user.urls import router as user_router
 from hms.interface.patient.urls import router as patient_router
 from hms.interface.doctor.urls import router as doctor_router
+from hms.interface.appointment.urls import router as appointment_router
 
 
 ENABLE_API = settings.ENABLE_API
@@ -37,6 +38,7 @@ urlpatterns += [
     path(API_SWAGGER_URL, include(user_router.urls)),
     path(API_SWAGGER_URL, include(patient_router.urls)),
     path(API_SWAGGER_URL, include(doctor_router.urls)),
+    path(API_SWAGGER_URL, include(appointment_router.urls)),
     path("api/v0/schema/", SpectacularAPIView.as_view(), name="schema"),
     # path(
     #     "api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"

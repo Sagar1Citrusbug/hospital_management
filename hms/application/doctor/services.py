@@ -25,7 +25,7 @@ class DoctorAppServices:
 
         name = data.get("name", None)
         specialization = data.get("specialization", None)
-        contact_number = data.get("contact_number", None)
+        contact_no = data.get("contact_no", None)
         email = data.get("email", None)
         username = data.get("username", None)
         password = data.get("password", None)
@@ -35,21 +35,22 @@ class DoctorAppServices:
         try:
             with transaction.atomic():
                 exist_user_obj = self.user_services.get_user_repo().filter(
-                    username=username
+                    email=email
                 )
                 if exist_user_obj:
                     raise DoctorCreationException(f"{username}", "already exists")
                 user_obj = user_factory_method.build_entity_with_id(
-                    password=password,
+                    
                     personal_data=user_personal_data,
                     is_staff=True,
                     is_patient=False,
                 )
+                user_obj.set_password(password)
                 user_obj.save()
                 doctor_obj = doctor_factory_method.build_entity_with_id(
                     name=name,
                     specialization=specialization,
-                    contact_number=contact_number,
+                    contact_no=contact_no,
                     user=user_obj,
                 )
                 doctor_obj.save()
@@ -76,7 +77,7 @@ class DoctorAppServices:
         """This method will edit doctor by pk."""
         name = data.get("name", None)
         specialization = data.get("specialization", None)
-        contact_number = data.get("contact_number", None)
+        contact_no = data.get("contact_no", None)
         doctor_factory_method = self.doctors_services.get_doctor_factory()
         try:
             doctor_obj = self.get_doctor_by_pk(pk=pk)
@@ -84,7 +85,7 @@ class DoctorAppServices:
                 doctor=doctor_obj,
                 name=name,
                 specialization=specialization,
-                contact_number=contact_number,
+                contact_no=contact_no,
             )
             doctor.save()
             return doctor
@@ -99,8 +100,8 @@ class DoctorAppServices:
                 user = (
                     self.user_services.get_user_repo().filter(pk=doctor.user.id).first()
                 )
-                doctor.soft_delete()
-                user.soft_delete()
+                doctor.delete()
+                user.delete()
                 return doctor
         except Exception as e:
             raise DeleteDoctorException(

@@ -23,13 +23,10 @@ class UserViewSet(viewsets.ViewSet):
     @action(detail=False, methods=["post"], name="registration")
     def registration(self, request):
         serializer = self.get_serializer_class()
-    
         serializer_data = serializer(data=request.data)
-      
         if serializer_data.is_valid():
             try:
                 UserAppServices().create_user_from_dict(data=serializer_data.data)
-
                 return CustomResponse(
                     status_code=status.HTTP_201_CREATED,
                     data=serializer_data.data,
@@ -73,15 +70,14 @@ class UserViewSet(viewsets.ViewSet):
             if serializer_obj.is_valid():
                 email = serializer_obj.data.get("email", None)
                 password = serializer_obj.data.get("password", None)
-                print(email, password, "getting credssssss ----------")
                 try:
                     user = authenticate(email=email, password=password)
-                    print(user, "user   -------------")
+                    
                     response_data = UserAppServices().get_user_token(user=user)
                     message = "Login Successful"
                     return CustomResponse(data=response_data, message=message)
                 except UserLoginException as e:
-                    print(e,"eeeeee --------------")
+                 
                     message = "Invalid Credentials"
                     return CustomResponse(
                         status_code=status.HTTP_400_BAD_REQUEST,

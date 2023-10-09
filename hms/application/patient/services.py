@@ -28,6 +28,7 @@ class PatientAppServices:
         address = data.get("address", None)
         email = data.get("email", None)
         username = data.get("username", None)
+        password = data.get("password", None)
         user_personal_data = UserPersonalData(email=email, username=username)
         user_factory_method = self.user_services.get_user_factory()
         patient_factory_method = self.patients_services.get_patient_factory()
@@ -41,6 +42,7 @@ class PatientAppServices:
                     is_staff=False,
                     is_patient=True,
                 )
+                user_obj.set_password(password)
                 user_obj.save()
 
                 patient_obj = patient_factory_method.build_entity_with_id(

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "hms.domain.user",
     "hms.domain.patient",
     "hms.domain.doctor",
+    "hms.domain.appointment",
 ]
 
 MIDDLEWARE = [
