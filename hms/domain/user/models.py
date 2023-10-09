@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
+
 # from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 
@@ -43,7 +44,6 @@ class UserBasePermissions:
     is_staff: bool
     is_active: bool
     is_patient: bool
-
 
 
 class UserManagerAutoID(UserManager):
@@ -95,7 +95,7 @@ class UserFactory:
         """This is a factory method used for build an instance of User"""
 
         personal_data_dict = asdict(personal_data, skip_empty=True)
-      
+
         return User(
             id=UserID().id,
             **personal_data_dict,

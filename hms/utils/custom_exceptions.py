@@ -11,7 +11,7 @@ class UserRegistrationException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
-    
+
 
 @dataclass(frozen=True)
 class UserAlreadyExistsException(Exception):
@@ -48,6 +48,7 @@ class UserLogoutException(Exception):
     def __repr__(self):
         return f"{self.item}: {self.message}"
 
+
 @dataclass(frozen=True)
 class DoctorCreationException(Exception):
     item: str
@@ -59,6 +60,7 @@ class DoctorCreationException(Exception):
     def __repr__(self):
         return f"{self.item}: {self.message}"
 
+
 @dataclass(frozen=True)
 class DoctorEditException(Exception):
     item: str
@@ -69,7 +71,6 @@ class DoctorEditException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
-
 
 
 @dataclass(frozen=True)
@@ -84,7 +85,6 @@ class DeleteDoctorException(Exception):
         return f"{self.item}: {self.message}"
 
 
-
 @dataclass(frozen=True)
 class PatientCreationException(Exception):
     item: str
@@ -95,7 +95,6 @@ class PatientCreationException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
-
 
 
 @dataclass(frozen=True)
@@ -110,7 +109,6 @@ class EditPatientException(Exception):
         return f"{self.item}: {self.message}"
 
 
-
 @dataclass(frozen=True)
 class DeletePatientException(Exception):
     item: str
@@ -121,7 +119,6 @@ class DeletePatientException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
-
 
 
 @dataclass(frozen=True)
@@ -136,8 +133,6 @@ class AppointmentCreationException(Exception):
         return f"{self.item}: {self.message}"
 
 
-
-
 @dataclass(frozen=True)
 class EditAppointmentException(Exception):
     item: str
@@ -148,7 +143,6 @@ class EditAppointmentException(Exception):
 
     def __repr__(self):
         return f"{self.item}: {self.message}"
-
 
 
 @dataclass(frozen=True)

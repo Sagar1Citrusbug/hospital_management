@@ -42,8 +42,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "rest_framework",
     "drf_spectacular",
-    # "rest_framework_swagger", 
-    # "drf_yasg",
     "hms.domain.user",
     "hms.domain.patient",
     "hms.domain.doctor",
