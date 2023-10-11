@@ -21,6 +21,7 @@ class PatientAppServices:
         self.user_services = UserServices()
 
     def create_patient_from_dict(self, data: dict) -> Patient:
+        print(data)
         name = data.get("name", None)
         dob = data.get("dob", None)
         gender = data.get("gender", None)
@@ -29,6 +30,7 @@ class PatientAppServices:
         email = data.get("email", None)
         username = data.get("username", None)
         password = data.get("password", None)
+        print(password, "password in create password dictionary....")
         user_personal_data = UserPersonalData(email=email, username=username)
         user_factory_method = self.user_services.get_user_factory()
         patient_factory_method = self.patients_services.get_patient_factory()
@@ -43,6 +45,7 @@ class PatientAppServices:
                     is_patient=True,
                 )
                 user_obj.set_password(password)
+                print(user_obj.password, "pswd 22222 ----------------")
                 user_obj.save()
 
                 patient_obj = patient_factory_method.build_entity_with_id(

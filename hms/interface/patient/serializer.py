@@ -71,6 +71,7 @@ class PatientCreateSerializer(PatientBaseSerializer):
     def validate_password(self, value):
         if len(value) < 8:
             raise serializers.ValidationError("Password should be 8 char long")
+        return value
 
     def validate_name(self, value):
         if len(value) > 50:

@@ -8,17 +8,20 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from hms.utils.custom_response import CustomResponse
 from .serializers import UserRegistrationSerializer, UserLoginSerializer
-from hms.utils.custom_exceptions import UserLoginException, UserLogoutException, UserRegistrationException, UserAlreadyExistsException
+from hms.utils.custom_exceptions import (
+    UserLoginException,
+    UserLogoutException,
+    UserRegistrationException,
+    UserAlreadyExistsException,
+)
 
 
 class UserViewSet(viewsets.ViewSet):
     def get_serializer_class(self):
-    
         if self.action == "registration":
             return UserRegistrationSerializer
-        if self.action =="login":
+        if self.action == "login":
             return UserLoginSerializer
-
 
     @action(detail=False, methods=["post"], name="registration")
     def registration(self, request):
@@ -61,41 +64,37 @@ class UserViewSet(viewsets.ViewSet):
             for_error=True,
         )
 
-
     @action(detail=False, methods=["post"], name="login")
     def login(self, request):
-      
-            serializer = self.get_serializer_class()
-            serializer_obj = serializer(data=request.data)
-            if serializer_obj.is_valid():
-                email = serializer_obj.data.get("email", None)
-                password = serializer_obj.data.get("password", None)
-                try:
-                    user = authenticate(email=email, password=password)
-                    
-                    response_data = UserAppServices().get_user_token(user=user)
-                    message = "Login Successful"
-                    return CustomResponse(data=response_data, message=message)
-                except UserLoginException as e:
-                 
-                    message = "Invalid Credentials"
-                    return CustomResponse(
-                        status_code=status.HTTP_400_BAD_REQUEST,
-                        
-                        message=message,
-                    )
-                except Exception as e:
-                    return CustomResponse(
-                        status=status.HTTP_400_BAD_REQUEST,
-                        errors=str(e.args),
-                        message="An error occurred while Login.",
-                    )
-            return CustomResponse().fail(
-                status=status.HTTP_400_BAD_REQUEST,
-                errors=serializer_obj.errors,
-                message=serializer_obj.errors,
-            )
-        
+        serializer = self.get_serializer_class()
+        serializer_obj = serializer(data=request.data)
+        if serializer_obj.is_valid():
+            email = serializer_obj.data.get("email", None)
+            password = serializer_obj.data.get("password", None)
+
+            try:
+                user = authenticate(email=email, password=password)
+
+                response_data = UserAppServices().get_user_token(user=user)
+                message = "Login Successful"
+                return CustomResponse(data=response_data, message=message)
+            except UserLoginException as e:
+                message = "Invalid Credentials"
+                return CustomResponse(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    message=message,
+                )
+            except Exception as e:
+                return CustomResponse(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    errors=str(e.args),
+                    message="An error occurred while Login.",
+                )
+        return CustomResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message=serializer_obj.errors,
+        )
+
 
 class UserLogoutViewset(viewsets.ViewSet):
     """
@@ -117,6 +116,5 @@ class UserLogoutViewset(viewsets.ViewSet):
             print(e)
             return CustomResponse(
                 status_code=status.HTTP_400_BAD_REQUEST,
-            
                 message="An error occurred while logout.",
             )

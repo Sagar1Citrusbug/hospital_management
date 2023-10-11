@@ -16,7 +16,7 @@ from .serializer import (
 from hms.utils.custom_exceptions import (
     AppointmentCreationException,
     EditAppointmentException,
-    DeleteAppointmentException
+    DeleteAppointmentException,
 )
 
 from hms.utils.custom_response import CustomResponse
@@ -52,7 +52,7 @@ class AppointmentViewSet(viewsets.ViewSet):
             try:
                 appointment_obj = (
                     self.appointments_app_services.create_appointment_from_dict(
-                        data=serializer_obj.data, user=self.request.user
+                        data=serializer_obj.data, user=request.user
                     )
                 )
                 response = AppointmentSerializer(appointment_obj)
@@ -67,7 +67,6 @@ class AppointmentViewSet(viewsets.ViewSet):
                 )
         return CustomResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            
             message=serializer_obj.errors,
         )
 
@@ -123,7 +122,6 @@ class AppointmentViewSet(viewsets.ViewSet):
             except EditAppointmentException as e:
                 return CustomResponse(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    
                     message=e.item,
                 )
         return CustomResponse(

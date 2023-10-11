@@ -27,6 +27,7 @@ class AppointmentAppServices:
         """This method will return Appointment."""
 
         patient_id = data.get("patient_id", None)
+
         appointment_date = data.get("appointment_date", None)
         purpose = data.get("purpose", None)
         appointment_factory_method = (
@@ -34,13 +35,15 @@ class AppointmentAppServices:
         )
         try:
             exists_appointment_obj = (
-                self.appointments_services.get_appointment_repo().filter(
-                    doctor__user=user, patient__id=patient_id, is_active=True
-                )
+                self.appointments_services.get_appointment_repo()
+                .filter(doctor__user=user, patient__id=patient_id, is_active=True)
+                .exists()
             )
             if not exists_appointment_obj:
                 patient = self.patients_services.list_patients().get(id=patient_id)
-                doctor = self.doctors_services.list_doctors().get(user=user)
+
+                doctor = self.doctors_services.list_doctors().get(user__id=user.id)
+                print(doctor, "doctorrrrr")
                 appointment_obj = appointment_factory_method.build_entity_with_id(
                     appointment_date=appointment_date,
                     purpose=purpose,
@@ -54,7 +57,8 @@ class AppointmentAppServices:
             )
         except AppointmentCreationException as e:
             raise AppointmentCreationException(str(e), "Appointment create exception")
-        except Exception:
+        except Exception as e:
+            print(e)
             raise AppointmentCreationException(
                 "Patient does not exist", "Appointment create exception"
             )
@@ -88,8 +92,6 @@ class AppointmentAppServices:
             raise EditAppointmentException("Appointment does not exist", str(e))
 
     def edit_appointment_by_dict(self, pk: str, data: dict, user: User) -> Appointment:
-      
-
         appointment_date = data.get("appointment_date", None)
         purpose = data.get("purpose", None)
         try:
