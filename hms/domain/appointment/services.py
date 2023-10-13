@@ -6,7 +6,6 @@ from hms.domain.appointment.models import (
 
 
 class AppointmentServices:
-   
     def get_appointment_factory(
         self,
     ):

@@ -22,10 +22,8 @@ GENDER_CHOICES = (
 class Patient(AuditModelMixin):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=60)
     dob = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=6, choices=GENDER_CHOICES)
-    contact_no = models.CharField(max_length=15)
     address = models.CharField(max_length=250)
 
     def __str__(self):
@@ -39,19 +37,15 @@ class PatientFactory:
     @staticmethod
     def build_entity(
         id: PatientID,
-        name: str,
         dob: str,
         gender: str,
-        contact_no: str,
         address: str,
         user,
     ) -> Patient:
         return Patient(
             id=id.value,
-            name=name,
             dob=dob,
             gender=gender,
-            contact_no=contact_no,
             address=address,
             user=user,
         )
@@ -59,20 +53,16 @@ class PatientFactory:
     @classmethod
     def build_entity_with_id(
         cls,
-        name: str,
         dob: str,
         gender: str,
-        contact_no: str,
         address: str,
         user,
     ) -> Patient:
         entity_id = PatientID(uuid.uuid4())
         return cls.build_entity(
             id=entity_id,
-            name=name,
             dob=dob,
             gender=gender,
-            contact_no=contact_no,
             address=address,
             user=user,
         )
@@ -81,20 +71,15 @@ class PatientFactory:
     def update_entity(
         self,
         patient: Patient,
-        name: str,
         dob: str,
         gender: str,
-        contact_no: str,
         address: str,
     ) -> Patient:
-        if name:
-            patient.name = name
         if dob:
             patient.dob = dob
         if gender:
             patient.gender = gender
-        if contact_no:
-            patient.contact_no = contact_no
+
         if address:
             patient.address = address
         return patient

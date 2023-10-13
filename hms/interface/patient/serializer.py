@@ -18,15 +18,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     """Patient Serializer"""
 
+    patient_name = serializers.SerializerMethodField()
+    contact_no = serializers.SerializerMethodField()
+
+    def get_patient_name(self):
+        return self.user.name
+
+    def get_contact_no(self):
+        return self.user.contact_no
+
     class Meta:
         model = Patient
         fields = [
             "id",
             "user",
-            "name",
+            "patient_name",
+            "contact_no",
             "dob",
             "gender",
-            "contact_no",
             "address",
         ]
 
@@ -35,26 +44,20 @@ class PatientSerializer(serializers.ModelSerializer):
         return super(PatientSerializer, self).to_representation(instance)
 
 
-class PatientBaseSerializer(serializers.Serializer):
-    """Patient base create serializer"""
-
-    name = serializers.CharField(max_length=100, required=False)
-    dob = serializers.DateField(required=False)
-    gender = serializers.CharField(max_length=100, required=False)
-    contact_no = serializers.CharField(max_length=100, required=False)
-    address = serializers.CharField(max_length=200, required=False)
-    email = serializers.CharField(max_length=150, required=False)
-    username = serializers.CharField(max_length=60, required=False)
-    password = serializers.CharField(max_length=60, required=False)
+GENDER_CHOICES = (
+    ("MALE", "Male"),
+    ("FEMALE", "Female"),
+    ("OTHER", "Other"),
+)
 
 
-class PatientCreateSerializer(PatientBaseSerializer):
+class PatientCreateSerializer(serializers.Serializer):
     """Patient create serializer"""
 
     name = serializers.CharField(max_length=100, required=True)
     dob = serializers.DateField(required=True)
-    gender = serializers.CharField(max_length=100, required=True)
-    contact_no = serializers.CharField(max_length=100, required=True)
+    gender = serializers.ChoiceField(required=True, choices=GENDER_CHOICES)
+    contact_no = serializers.CharField(max_length=15, required=True)
     address = serializers.CharField(max_length=200, required=True)
     email = serializers.CharField(max_length=150, required=True)
     username = serializers.CharField(max_length=60, required=True)
@@ -99,7 +102,7 @@ class PatientCreateSerializer(PatientBaseSerializer):
         return value
 
 
-class PatientEditSerializer(PatientBaseSerializer):
+class PatientEditSerializer(serializers.Serializer):
     """Patient edit serializer"""
 
     name = serializers.CharField(max_length=100, required=False)

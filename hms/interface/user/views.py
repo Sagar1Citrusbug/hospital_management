@@ -86,8 +86,7 @@ class UserViewSet(viewsets.ViewSet):
                 )
             except Exception as e:
                 return CustomResponse(
-                    status=status.HTTP_400_BAD_REQUEST,
-                    errors=str(e.args),
+                    status_code=status.HTTP_400_BAD_REQUEST,
                     message="An error occurred while Login.",
                 )
         return CustomResponse(

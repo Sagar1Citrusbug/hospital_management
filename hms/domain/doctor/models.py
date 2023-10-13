@@ -13,9 +13,7 @@ class DoctorID:
 class Doctor(AuditModelMixin):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
     specialization = models.CharField(max_length=100)
-    contact_no = models.CharField(max_length=15)
 
     def __str__(self):
         return self.user.email

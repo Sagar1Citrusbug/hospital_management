@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser, UserManager
 
 # from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
-
 from dataclasses import dataclass, field
 from hms.utils.helper import asdict
 from hms.utils.base_models import AuditModelMixin
@@ -29,6 +28,8 @@ class UserPersonalData:
     """
 
     email: str
+    name: Union[str, None] = None
+    contact_no: Union[str, None] = None
     username: Union[str, None] = None
 
     def __post_init__(self):
@@ -74,6 +75,8 @@ class User(AbstractUser, AuditModelMixin):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=30, blank=True, null=True)
+    contact_no = models.CharField(max_length=15)
+    name = models.CharField(max_length=100, null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_patient = models.BooleanField(default=False)
 

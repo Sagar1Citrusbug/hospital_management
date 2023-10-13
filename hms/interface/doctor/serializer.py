@@ -16,11 +16,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class DoctorSerializer(serializers.ModelSerializer):
-    """Doctor Serializer"""
-
     class Meta:
         model = Doctor
-        fields = ["id", "user", "name", "specialization", "contact_no"]
+        fields = [
+            "id",
+            "user",
+            "specialization",
+        ]
 
     def to_representation(self, instance):
         self.fields["user"] = UserProfileSerializer(read_only=True)

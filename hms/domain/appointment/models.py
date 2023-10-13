@@ -38,10 +38,7 @@ class Appointment(AuditModelMixin):
     def __str__(self):
         return self.patient.user.email
 
-    
-
     class Meta:
-        
         db_table = "appointment"
 
 

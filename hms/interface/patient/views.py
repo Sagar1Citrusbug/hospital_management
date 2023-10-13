@@ -49,7 +49,6 @@ class PatientViewSet(viewsets.ViewSet):
         serializer_obj = serializer(data=request.data)
 
         if serializer_obj.is_valid():
-            print(serializer_obj.data, "se obj data.....................")
             try:
                 patient_obj = self.patients_app_services.create_patient_from_dict(
                     data=serializer_obj.data
