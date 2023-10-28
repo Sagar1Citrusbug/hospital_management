@@ -66,7 +66,7 @@ class UserAppServices:
                 updated_at=user.updated_at,
                 is_active=user.is_active,
                 access=str(token.access_token),
-                refesh=str(token),
+                refresh=str(token),
             )
             return data
         except Exception as e:

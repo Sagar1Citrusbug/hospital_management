@@ -71,10 +71,16 @@ class PatientFactory:
     def update_entity(
         self,
         patient: Patient,
+        name:str, 
+        contact_no:str,
         dob: str,
         gender: str,
         address: str,
     ) -> Patient:
+        if name:
+            patient.user.name = name
+        if contact_no:
+            patient.user.contact_no = contact_no
         if dob:
             patient.dob = dob
         if gender:

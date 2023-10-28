@@ -27,13 +27,11 @@ class Doctor(AuditModelMixin):
 class DoctorFactory:
     @staticmethod
     def build_entity_with_id(
-        name: str, specialization: str, contact_no: str, user: User
+       specialization: str, user: User
     ) -> Doctor:
         return Doctor(
             id=DoctorID(uuid.uuid4()).value,
-            name=name,
             specialization=specialization,
-            contact_no=contact_no,
             user=user,
         )
 
@@ -41,14 +39,10 @@ class DoctorFactory:
     def update_entity(
         self,
         doctor: Doctor,
-        name: str,
         specialization: str,
-        contact_no: str,
     ) -> Doctor:
-        if name:
-            doctor.name = name
+       
         if specialization:
             doctor.specialization = specialization
-        if contact_no:
-            doctor.contact_no = contact_no
+       
         return doctor
