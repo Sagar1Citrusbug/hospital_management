@@ -16,16 +16,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class DoctorSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    contact_no = serializers.SerializerMethodField()
+    def get_name(self, obj):
+        return obj.user.name
+    def get_username(self, obj):
+        return obj.user.username
+    def get_contact_no(self, obj):
+        return obj.user.contact_no
     class Meta:
         model = Doctor
         fields = [
             "id",
-            "user",
+            "username",          
+            "name",
+            "contact_no",
             "specialization",
         ]
 
     def to_representation(self, instance):
-        self.fields["user"] = UserProfileSerializer(read_only=True)
+        # self.fields["user"] = UserProfileSerializer(read_only=True)
         return super(DoctorSerializer, self).to_representation(instance)
 
 

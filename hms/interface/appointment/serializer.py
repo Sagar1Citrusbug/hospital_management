@@ -7,7 +7,9 @@ from hms.domain.patient.models import Patient
 
 class DoctorProfileSerializer(serializers.ModelSerializer):
     """DoctorProfile Serializer"""
-
+    name  = serializers.SerializerMethodField()
+    def get_name(self, obj):
+        return obj.user.name
     class Meta:
         model = Doctor
         fields = [
@@ -17,7 +19,9 @@ class DoctorProfileSerializer(serializers.ModelSerializer):
 
 class PatientProfileSerializer(serializers.ModelSerializer):
     """PatientProfile Serializer"""
-
+    name  = serializers.SerializerMethodField()
+    def get_name(self, obj):
+        return obj.user.name
     class Meta:
         model = Patient
         fields = [

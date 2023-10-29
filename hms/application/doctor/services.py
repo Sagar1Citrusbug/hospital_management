@@ -29,7 +29,7 @@ class DoctorAppServices:
         email = data.get("email", None)
         username = data.get("username", None)
         password = data.get("password", None)
-        user_personal_data = UserPersonalData(email=email, username=username)
+        user_personal_data = UserPersonalData(email=email, username=username, name=name, contact_no=contact_no)
         user_factory_method = self.user_services.get_user_factory()
         doctor_factory_method = self.doctors_services.get_doctor_factory()
         try:
@@ -38,7 +38,7 @@ class DoctorAppServices:
                     email=email
                 )
                 if exist_user_obj:
-                    raise DoctorCreationException(f"{username}", "already exists")
+                    raise DoctorCreationException(f"{email}", "already exists")
                 user_obj = user_factory_method.build_entity_with_id(
                     
                     personal_data=user_personal_data,
@@ -48,9 +48,7 @@ class DoctorAppServices:
                 user_obj.set_password(password)
                 user_obj.save()
                 doctor_obj = doctor_factory_method.build_entity_with_id(
-                    name=name,
                     specialization=specialization,
-                    contact_no=contact_no,
                     user=user_obj,
                 )
                 doctor_obj.save()

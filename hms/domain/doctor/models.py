@@ -39,9 +39,14 @@ class DoctorFactory:
     def update_entity(
         self,
         doctor: Doctor,
+        name:str,
         specialization: str,
+        contact_no:str,
     ) -> Doctor:
-       
+        if name:
+            doctor.user.name  = name
+        if contact_no :
+            doctor.user.contact_no = contact_no
         if specialization:
             doctor.specialization = specialization
        

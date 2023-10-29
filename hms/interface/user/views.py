@@ -66,6 +66,7 @@ class UserViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=["post"], name="login")
     def login(self, request):
+        print("login request for test account received.........")
         serializer = self.get_serializer_class()
         serializer_obj = serializer(data=request.data)
         if serializer_obj.is_valid():
@@ -74,7 +75,7 @@ class UserViewSet(viewsets.ViewSet):
 
             try:
                 user = authenticate(email=email, password=password)
-
+                print(user, "user getting ++++++++++")
                 response_data = UserAppServices().get_user_token(user=user)
                 message = "Login Successful"
                 return CustomResponse(data=response_data, message=message)

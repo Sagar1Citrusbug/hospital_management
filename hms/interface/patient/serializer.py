@@ -21,11 +21,11 @@ class PatientSerializer(serializers.ModelSerializer):
     patient_name = serializers.SerializerMethodField()
     contact_no = serializers.SerializerMethodField()
 
-    def get_patient_name(self):
-        return self.user.name
+    def get_patient_name(self, obj):
+        return obj.user.name
 
-    def get_contact_no(self):
-        return self.user.contact_no
+    def get_contact_no(self, obj):
+        return obj.user.contact_no
 
     class Meta:
         model = Patient
@@ -81,7 +81,7 @@ class PatientCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError("Name should not be more than 50 latter")
         return value
 
-    def validate_date_of_birth(self, value):
+    def validate_dob(self, value):
         today = datetime.date.today()
         if value > today:
             raise serializers.ValidationError("Invalid Date")
@@ -119,18 +119,18 @@ class PatientEditSerializer(serializers.Serializer):
             raise serializers.ValidationError("Name should not be more than 50 latter")
         return value
 
-    def validate_date_of_birth(self, value):
+    def validate_dob(self, value):
         today = datetime.date.today()
         if value > today:
             raise serializers.ValidationError("Invalid Date")
         return value
 
-    def validate_contact_number(self, value):
-        if settings.ENABLE_VALIDATIONS:
-            if not re.match(settings.CONTACT_NUMBER_REGEX, value):
-                raise serializers.ValidationError("Invalid contact number")
-        return value
+    def validate_contact_no(self, value):
+        regex = re.compile(r"(^[+0-9]{1,3})*([0-9]{10,11}$)")
 
+        if not re.fullmatch(regex, value):
+            raise serializers.ValidationError("Invalid contact number")
+        return value
     def validate_address(self, value):
         if len(value) > 100:
             raise serializers.ValidationError(

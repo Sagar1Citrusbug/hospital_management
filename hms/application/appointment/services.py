@@ -41,9 +41,8 @@ class AppointmentAppServices:
             )
             if not exists_appointment_obj:
                 patient = self.patients_services.list_patients().get(id=patient_id)
-
                 doctor = self.doctors_services.list_doctors().get(user__id=user.id)
-                print(doctor, "doctorrrrr")
+              
                 appointment_obj = appointment_factory_method.build_entity_with_id(
                     appointment_date=appointment_date,
                     purpose=purpose,
