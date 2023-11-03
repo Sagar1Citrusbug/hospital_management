@@ -93,7 +93,7 @@ class User(AbstractUser, AuditModelMixin):
 class UserFactory:
     @staticmethod
     def build_entity_with_id(
-        personal_data: UserPersonalData,  is_patient: bool,is_staff =  False
+        personal_data: UserPersonalData,  is_patient = False,is_staff =  False
     ):
         """This is a factory method used for build an instance of User"""
 

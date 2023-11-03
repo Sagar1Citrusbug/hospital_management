@@ -1,6 +1,7 @@
 from django.forms import ValidationError
 from django.test import TestCase
 from hms.domain.user.models import User, UserPersonalData, UserFactory
+from hms.application.user.services import UserServices 
 from faker import Faker
 from django.contrib.auth.hashers import make_password
 fake = Faker()
@@ -11,30 +12,32 @@ class UserModelTestCase(TestCase):
 
     def setUp(self):
         self.user_factory = UserFactory()
+        self.user_services = UserServices()
+        self.user_personal_data = UserPersonalData
         self.user_model = User
-        data = dict(
+      
+        self.user_create = self.user_factory.build_entity_with_id(self.user_personal_data(
             name=fake.first_name(),
-            username=fake.name(),
+            username=fake.first_name(),
             email=fake.email(),
-            contact_no=fake.phone_number(),
-        )
-        self.user_create = User.objects.create(**data)
+            contact_no=fake.phone_number()
+            ))
+        
         self.user_create.password = make_password(fake.password())
+        self.user_create.save()
         self.user_id = self.user_create.id
         return self.user_create
 
     def test_create_user_factory(self):
         """Test Case on User Model to test Create User with build entity"""
-        personal_data = UserPersonalData(
+     
+        user_obj = self.user_factory.build_entity_with_id(
+            personal_data=self.user_personal_data(name=fake.first_name(),
             username=fake.first_name(),
             email=fake.email(),
-            name=fake.name(),
-            contact_no=fake.phone_number(),
-        )
-        user_obj = self.user_factory.build_entity_with_id(
-            personal_data=personal_data,
-          
-            is_patient=fake.pybool(),
+            contact_no=fake.phone_number()
+            )
+            
         )
         user_obj.password = make_password(fake.password())
         user_obj.save()
@@ -42,15 +45,12 @@ class UserModelTestCase(TestCase):
 
     def test_create_user(self):
         """Test Case on User Model to test Create User"""
-        data = dict(
-            username=fake.name(),
+        
+        user_create = self.user_factory.build_entity_with_id(self.user_personal_data(name=fake.first_name(),
+            username=fake.first_name(),
             email=fake.email(),
-            name=fake.name(),
-            contact_no=fake.phone_number(),
-           
-            is_patient=fake.pybool(),
-        )
-        user_create = User.objects.create(**data)
+            contact_no=fake.phone_number()
+            ))
         user_create.password = make_password(fake.password())
         user_create.save()
         self.assertTrue(isinstance(user_create, self.user_model))
@@ -58,21 +58,19 @@ class UserModelTestCase(TestCase):
     def test_negative_create_user(self):
             """Negative Test Case on User Model to test Create User"""
        
-            data = dict(
-                name=fake.name(),
-                contact_no=fake.phone_number(),
-                username=fake.first_name(),
-                email=fake.email(),
-              
-            )
-            user_create = User.objects.create(**data)
+       
+            user_create = self.user_factory.build_entity_with_id(self.user_personal_data(name=fake.first_name(),
+            username=fake.first_name(),
+            email=fake.email(),
+            contact_no=fake.phone_number()
+            ))
             user_create.password = make_password(fake.password())
             user_create.save()
             self.assertTrue(isinstance(user_create, self.user_model))
 
     def test_get_user(self):
         """Test Case on User Model to test get User"""
-        user_obj = User.objects.get(id=self.user_id)
+        user_obj = self.user_services.get_user_by_id(id=self.user_id)
         self.assertTrue(isinstance(user_obj, self.user_model))
 
     def test_negative_get_user(self):
@@ -80,12 +78,12 @@ class UserModelTestCase(TestCase):
         with self.assertRaises(
             (ValidationError, NameError, ValueError, TypeError, AssertionError)
         ):
-            user_obj = User.objects.get(id="hello")
+            user_obj = self.user_services.get_user_by_id("sdlfkjsfowiru09u")
             self.assertTrue(isinstance(user_obj, self.user_model))
 
     def test_update_user(self):
         """Test Case on User Model to test Update User"""
-        user_update = User.objects.get(id=self.user_id)
+        user_update = self.user_services.get_user_by_id(id=self.user_id)
         current_user = user_update.username
         user_update.username = fake.first_name()
         user_update.save()
@@ -96,7 +94,7 @@ class UserModelTestCase(TestCase):
         with self.assertRaises(
             (ValidationError, NameError, ValueError, TypeError, AssertionError)
         ):
-            user_obj = User.objects.get(id="mitarth")
+            user_obj = self.user_services.get_user_by_id("sdlfkjsfowiru09u")
             updated_user_obj = user_obj.email
             user_obj.email = "sagar"
             user_obj.save()
@@ -104,9 +102,9 @@ class UserModelTestCase(TestCase):
 
     def test_delete_user(self):
         """Test Case on User Model to test Delete User"""
-        user_obj = User.objects.get(id=self.user_id)
+        user_obj = self.user_services.get_user_by_id(id=self.user_id)
         user_obj.delete()
-        get_user = User.objects.filter(id=self.user_id)
+        get_user =  self. user_services.get_user_repo().filter(id=self.user_id)
         self.assertEqual(get_user.__len__(), 0)
 
     def test_negative_delete_user(self):
@@ -114,7 +112,7 @@ class UserModelTestCase(TestCase):
         with self.assertRaises(
             (ValidationError, NameError, ValueError, TypeError, AssertionError)
         ):
-            user_obj = User.objects.get(id="sagar")
+            user_obj = self.user_services.get_user_by_id("sdlfkjsfowiru09ufsdffs")
             user_obj.delete()
-            get_user = User.objects.filter(id=self.user_id)
+            get_user = self. user_services.get_user_repo().filter(id=self.user_id)
             self.assertEqual(get_user.__len__(), 0)

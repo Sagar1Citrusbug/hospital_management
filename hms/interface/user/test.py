@@ -2,7 +2,6 @@ from django.forms import ValidationError
 from faker import Faker
 from django.contrib.auth.hashers import make_password
 from rest_framework.test import APIRequestFactory, APITestCase
-from rest_framework.test import force_authenticate
 from hms.domain.user.models import User
 
 from .views import UserViewSet
@@ -30,11 +29,11 @@ class TestUserView(APITestCase):
         """
         Test-case method on UserViewSet to login test.
         """
-        data = dict(email=self.user_name, password=self.test_password)
+        data = dict(email=self.email, password=self.test_password)
         request = self.factory.post("/api/v0/user/login/", data)
-        force_authenticate(request, user=self.test_user)
+        # force_authenticate(request, user=self.test_user)
         response = self.user_login_view(request)
-        print(response.data, "========= res data............")
+        
         response_keys = response.data.keys()
         response_data_keys = response.data["data"].keys()
         self.assertEqual(response.data["success"], True)

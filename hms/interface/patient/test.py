@@ -79,7 +79,7 @@ class TestPatientView(APITestCase):
         force_authenticate(request, user=self.admin_user)
         response = self.patient_add_view(request)
         response_keys = response.data.keys()
-        print(response.data, type(response.data), response.data.keys(), "+++++++++++++==================        ----------- ")
+        
         self.assertEqual(response.data["success"], True)
         self.assertIn("message", response_keys)
         #self.assertIn("success", response_keys)

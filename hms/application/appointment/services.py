@@ -57,7 +57,7 @@ class AppointmentAppServices:
         except AppointmentCreationException as e:
             raise AppointmentCreationException(str(e), "Appointment create exception")
         except Exception as e:
-            print(e)
+            
             raise AppointmentCreationException(
                 "Patient does not exist", "Appointment create exception"
             )

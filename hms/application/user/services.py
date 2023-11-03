@@ -3,8 +3,7 @@ from rest_framework_simplejwt.tokens import (
     OutstandingToken,
     BlacklistedToken,
 )
-# 
-# from django.contrib.auth.hashers import set_password
+
 from django.db import transaction
 from hms.domain.user.models import User, UserBasePermissions, UserPersonalData
 from hms.domain.user.services import UserServices
@@ -22,8 +21,11 @@ class UserAppServices:
     def create_user_from_dict(self, data: dict) -> User:
         """This method will create user from dict."""
         with transaction.atomic():
+            print(data, "+++++++++++++++++++")
             email = data.get("email", None)
             username=data.get("username", None)
+            name=data.get("name", None)
+            contact_no=data.get("contact_no", None)
             password = data.get("password", None)
             user_exists = self.user_services.get_user_repo().filter(email=email)
             if user_exists:
@@ -31,7 +33,7 @@ class UserAppServices:
                     "User already Exists", f"{user_exists[0].email} already exists."
                 )
             user_personal_data = UserPersonalData(
-          username=username, email=email
+          username=username, email=email, name=name, contact_no=contact_no
             )
            
             user_factory_method = self.user_services.get_user_factory()
@@ -39,8 +41,8 @@ class UserAppServices:
                 user_obj = user_factory_method.build_entity_with_id(
                 
                     personal_data=user_personal_data,
-                    is_patient = data.get("is_patient"),
-                    is_staff= data.get("is_staff")
+                    is_patient = data.setdefault("is_patient", False),
+                    is_staff= data.setdefault("is_staff", False)
                 )
                 user_obj.set_password(password)
                 user_obj.save()
@@ -76,7 +78,7 @@ class UserAppServices:
     
         try:
             tokens = OutstandingToken.objects.filter(user_id=user)
-            print(tokens, "tokents ----------------------")
+            
             for token in tokens:
                 t, _ = BlacklistedToken.objects.get_or_create(token=token)
             return True

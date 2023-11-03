@@ -1,7 +1,9 @@
 from django.forms import ValidationError
 from django.test import TestCase
+from .services import DoctorServices
 from hms.domain.user.test import UserModelTestCase
 from hms.domain.doctor.models import Doctor, DoctorFactory
+from hms.application.doctor.services import DoctorAppServices
 from faker import Faker
 
 fake = Faker()
@@ -13,14 +15,15 @@ class DoctorModelTestCase(TestCase):
     def setUp(self):
         self.user = UserModelTestCase
         self.doctor_factory = DoctorFactory()
+        self.doctor_service = DoctorServices
+        self.doctor_app_service = DoctorAppServices
         self.doctor_model = Doctor
         self.user_obj = self.user.setUp(self)
-        doctor_data = dict(
-            
-            specialization=fake.name(),
+        self.doctor_create = self.doctor_factory.build_entity_with_id(
+             specialization=fake.name(),
             user=self.user_obj,
         )
-        self.doctor_create = Doctor.objects.create(**doctor_data)
+        self.doctor_create.save()
         self.doctor_id = self.doctor_create.id
         return self.doctor_create
 
